@@ -81,10 +81,12 @@ export function applySecurity(app) {
   app.use(csrfProtection());
 }
 
-export const authRateLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 20,
-  standardHeaders: true,
-  legacyHeaders: false,
-  message: { ok: false, error: 'Trop de tentatives. Reessaie dans quelques minutes.' }
-});
+export function createAuthRateLimiter() {
+  return rateLimit({
+    windowMs: 15 * 60 * 1000,
+    max: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { ok: false, error: 'Trop de tentatives. Reessaie dans quelques minutes.' }
+  });
+}
