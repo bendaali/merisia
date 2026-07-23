@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Connexion - Merisia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..900,50..100,0..1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="/csrf.js"></script>
+</head>
+<body class="app-page auth-page">
+  <div class="grain" aria-hidden="true"></div>
+  <div class="network-bg" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
+      <g class="lines"><path d="M84 158 L304 94 L554 218 L820 122 L1160 252 L1360 170"/><path d="M120 620 L350 478 L610 552 L868 414 L1120 520 L1340 430"/><path d="M240 318 L430 430 L650 340 L884 486 L1080 314 L1300 360"/></g>
+      <g class="points"><circle cx="84" cy="158" r="5"/><circle cx="304" cy="94" r="6"/><circle cx="554" cy="218" r="5"/><circle cx="820" cy="122" r="6"/><circle cx="1160" cy="252" r="5"/><circle cx="1360" cy="170" r="5"/><circle cx="120" cy="620" r="5"/><circle cx="350" cy="478" r="6"/><circle cx="610" cy="552" r="5"/><circle cx="868" cy="414" r="5"/><circle cx="1120" cy="520" r="6"/><circle cx="1340" cy="430" r="5"/></g>
+    </svg>
+  </div>
+
+  <header class="topbar">
+    <a href="/" class="brand" aria-label="Merisia home"><span class="brand-name">Merisia</span></a>
+    <nav class="nav-links" aria-label="Navigation auth">
+      <a href="/">Accueil</a>
+      <a href="/register">Creer un compte</a>
+    </nav>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-copy">
+      <p class="eyebrow">Espace securise</p>
+      <h1><span class="static-word">Connexion</span></h1>
+      <p class="hero-text">Retrouve tes designs Merise, tes dossiers, et ton editeur dans un espace propre, rapide et organise.</p>
+      <div class="auth-proof">
+        <span>Cree</span><span>Sauvegarde</span><span>Organise</span>
+      </div>
+    </section>
+
+    <section class="auth-card" aria-label="Formulaire de connexion">
+      <p class="section-kicker">Bienvenue</p>
+      <h2>Connecte-toi a Merisia</h2>
+      <form id="loginForm">
+        <label>Email
+          <input name="email" type="email" placeholder="exemple@ecole.edu" required />
+        </label>
+        <label>Mot de passe
+          <input name="password" type="password" placeholder="********" required />
+        </label>
+        <p id="authError" class="section-kicker" aria-live="polite"></p>
+        <button class="primary-btn auth-submit" type="submit">Se connecter</button>
+      </form>
+      <br>
+      <a href="/pass-recover">Mot de passe oublie</a><br>
+      <a href="/register">Je n'ai pas encore de compte.</a>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('loginForm');
+    const errorBox = document.getElementById('authError');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorBox.textContent = '';
+      const body = Object.fromEntries(new FormData(form));
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (response.ok) {
+        const next = new URLSearchParams(location.search).get('next');
+        location.href = next && next.startsWith('/') ? next : '/dashboard';
+        return;
+      }
+      const payload = await response.json().catch(() => ({ error: 'Connexion impossible' }));
+      errorBox.textContent = payload.error || 'Connexion impossible';
+    });
+  </script>
+</body>
+</html>
