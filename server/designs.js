@@ -62,7 +62,7 @@ function canWriteDesign(access) {
 
 async function uniqueDesignTitle(pool, userId, baseTitle, excludeId = null) {
   const { rows } = await pool.query(
-    'SELECT title FROM designs WHERE owner_user_id = $1 AND ($2::int IS NULL OR id <> $2)',
+    'SELECT title FROM designs WHERE owner_user_id = $1 AND (CAST($2 AS INTEGER) IS NULL OR id <> $2)',
     [userId, excludeId]
   );
   const existing = new Set(rows.map((row) => String(row.title).trim().toLowerCase()));
@@ -93,11 +93,11 @@ export function registerDesignRoutes(app, pool) {
         LEFT JOIN folders user_folder ON user_folder.id = duf.folder_id AND user_folder.owner_user_id = $1
         LEFT JOIN folders owner_folder ON owner_folder.id = d.folder_id AND owner_folder.owner_user_id = d.owner_user_id
         WHERE (d.owner_user_id = $1 OR dc.user_id = $1)
-          AND ($2 = '%%' OR d.title ILIKE $2 OR d.kind ILIKE $2 OR d.status ILIKE $2 OR (CASE WHEN d.owner_user_id = $1 THEN owner_folder.name ELSE user_folder.name END) ILIKE $2)
-          AND ($3::int IS NULL OR (CASE WHEN d.owner_user_id = $1 THEN d.folder_id ELSE duf.folder_id END) = $3::int)
-          AND (($4::boolean = true AND d.status = 'Archive') OR ($4::boolean = false AND d.status <> 'Archive'))
+          AND ($2 = '%%' OR LOWER(d.title) LIKE LOWER($2) OR LOWER(d.kind) LIKE LOWER($2) OR LOWER(d.status) LIKE LOWER($2) OR LOWER(CASE WHEN d.owner_user_id = $1 THEN owner_folder.name ELSE user_folder.name END) LIKE LOWER($2))
+          AND (CAST($3 AS INTEGER) IS NULL OR (CASE WHEN d.owner_user_id = $1 THEN d.folder_id ELSE duf.folder_id END) = CAST($3 AS INTEGER))
+          AND (($4 = 1 AND d.status = 'Archive') OR ($4 = 0 AND d.status <> 'Archive'))
         ORDER BY d.updated_at DESC
-      `, [req.user.id, search, folder, archived]);
+      `, [req.user.id, search, folder, archived ? 1 : 0]);
       res.json(rows);
     } catch (error) {
       next(error);
@@ -170,7 +170,7 @@ export function registerDesignRoutes(app, pool) {
 
       const { rows } = await pool.query(`
         UPDATE designs
-        SET diagram_json = $1, updated_at = now()
+        SET diagram_json = $1, updated_at = CURRENT_TIMESTAMP
         WHERE id = $2
         RETURNING uuid AS id, updated_at
       `, [diagram, access.id]);
@@ -216,9 +216,9 @@ export function registerDesignRoutes(app, pool) {
         } else {
           await pool.query(`
             INSERT INTO design_user_folders (design_id, user_id, folder_id, updated_at)
-            VALUES ($1, $2, $3, now())
+            VALUES ($1, $2, $3, CURRENT_TIMESTAMP)
             ON CONFLICT (design_id, user_id)
-            DO UPDATE SET folder_id = EXCLUDED.folder_id, updated_at = now()
+            DO UPDATE SET folder_id = EXCLUDED.folder_id, updated_at = CURRENT_TIMESTAMP
           `, [access.id, req.user.id, folderId]);
           collaboratorFolderHandled = true;
         }
@@ -231,7 +231,7 @@ export function registerDesignRoutes(app, pool) {
 
       const { rows } = await pool.query(`
         UPDATE designs
-        SET ${updates.join(', ')}, updated_at = now()
+        SET ${updates.join(', ')}, updated_at = CURRENT_TIMESTAMP
         WHERE id = $${values.length}
         RETURNING uuid AS id, title, kind, status, updated_at
       `, values);
@@ -273,7 +273,7 @@ export function registerDesignRoutes(app, pool) {
         const access = await getDesignAccessByUuid(pool, uuid, req.user.id);
         if (!canWriteDesign(access)) return res.status(404).json({ ok: false, error: 'Design introuvable' });
         const { rowCount } = await pool.query(
-          'UPDATE designs SET xml_content = $1, updated_at = now() WHERE id = $2',
+          'UPDATE designs SET xml_content = $1, updated_at = CURRENT_TIMESTAMP WHERE id = $2',
           [xml, access.id]
         );
         if (!rowCount) return res.status(404).json({ ok: false, error: 'Design introuvable' });
@@ -381,13 +381,14 @@ export function registerDesignRoutes(app, pool) {
         [uuid, req.user.id]
       );
       if (!ownerRows.length) return res.status(404).json({ ok: false, error: 'Design introuvable' });
+      const email = String(req.params.email || '').toLowerCase();
       const { rows } = await pool.query(`
         DELETE FROM design_collaborators
         WHERE design_id = $1
           AND user_id = (SELECT id FROM users WHERE email = $2)
-        RETURNING (SELECT email FROM users WHERE id = user_id) AS email
-      `, [ownerRows[0].id, String(req.params.email || '').toLowerCase()]);
-      if (rows[0]?.email) notifyCollaboratorAccessRevoked(uuid, rows[0].email);
+        RETURNING user_id
+      `, [ownerRows[0].id, email]);
+      if (rows.length) notifyCollaboratorAccessRevoked(uuid, email);
       res.status(204).send();
     } catch (error) {
       next(error);
@@ -408,18 +409,17 @@ export function registerDesignRoutes(app, pool) {
       if (!ownerRows.length) return res.status(404).json({ ok: false, error: 'Design introuvable' });
 
       const { rows } = await pool.query(`
-        UPDATE design_collaborators dc
+        UPDATE design_collaborators
         SET role = $1
-        FROM users u
-        WHERE dc.user_id = u.id
-          AND dc.design_id = $2
-          AND u.email = $3
-        RETURNING u.email, dc.role
+        WHERE design_id = $2
+          AND user_id = (SELECT id FROM users WHERE email = $3)
+        RETURNING role
       `, [role, ownerRows[0].id, email]);
       if (!rows.length) return res.status(404).json({ ok: false, error: 'Collaborateur introuvable' });
 
-      notifyCollaboratorRoleUpdated(uuid, rows[0].email, rows[0].role);
-      res.json({ ok: true, collaborator: rows[0] });
+      const collaborator = { email, role: rows[0].role };
+      notifyCollaboratorRoleUpdated(uuid, collaborator.email, collaborator.role);
+      res.json({ ok: true, collaborator });
     } catch (error) {
       next(error);
     }
