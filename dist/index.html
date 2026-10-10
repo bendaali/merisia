@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Merisia — Concevoir, Planifier, Connecter, Exporter</title>
+  <meta name="description" content="Merisia est un outil de conception Merise pour créer des MCD, préparer le modèle logique, connecter les entités et exporter des schémas propres." />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..900,50..100,0..1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="/csrf.js"></script>
+  <script type="module" crossorigin src="/assets/main-Jw3p7289.js"></script>
+  <link rel="modulepreload" crossorigin href="/assets/modulepreload-polyfill-B5Qt9EMX.js">
+  <link rel="stylesheet" crossorigin href="/assets/main-CW_0LC0D.css">
+</head>
+<body>
+  <div class="grain" aria-hidden="true"></div>
+  <div class="network-bg" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
+      <g class="lines">
+        <path d="M96 178 L271 116 L452 210 L640 150 L812 244 L1042 162 L1292 242" />
+        <path d="M178 636 L342 506 L524 584 L720 432 L914 522 L1104 418 L1312 558" />
+        <path d="M254 294 L384 430 L560 352 L746 502 L906 324 L1088 348 L1258 216" />
+        <path d="M104 430 L320 362 L514 452 L692 306 L886 392 L1074 276 L1334 356" />
+      </g>
+      <g class="points">
+        <circle cx="96" cy="178" r="5"/><circle cx="271" cy="116" r="6"/><circle cx="452" cy="210" r="5"/><circle cx="640" cy="150" r="7"/><circle cx="812" cy="244" r="5"/><circle cx="1042" cy="162" r="6"/><circle cx="1292" cy="242" r="5"/>
+        <circle cx="178" cy="636" r="6"/><circle cx="342" cy="506" r="5"/><circle cx="524" cy="584" r="7"/><circle cx="720" cy="432" r="5"/><circle cx="914" cy="522" r="6"/><circle cx="1104" cy="418" r="5"/><circle cx="1312" cy="558" r="7"/>
+        <circle cx="254" cy="294" r="4"/><circle cx="384" cy="430" r="6"/><circle cx="560" cy="352" r="5"/><circle cx="746" cy="502" r="6"/><circle cx="906" cy="324" r="5"/><circle cx="1088" cy="348" r="7"/><circle cx="1258" cy="216" r="5"/>
+      </g>
+    </svg>
+  </div>
+
+  <header class="topbar">
+    <a href="#" class="brand" aria-label="Merisia home">
+      <span class="brand-name">Merisia</span>
+    </a>
+    <nav class="nav-links" aria-label="Main navigation">
+      <a href="#features">Fonctionnalités</a>
+      <a href="#workflow">Workflow</a>
+    </nav>
+    <div class="account-menu" id="accountMenu">
+      <a class="login" id="loginLink" href="/auth">Connexion</a>
+      <button class="login account-button" id="accountButton" type="button" aria-expanded="false" hidden>Compte</button>
+      <div class="account-dropdown" id="accountDropdown" hidden>
+        <a href="/dashboard">Designs</a>
+        <button type="button" id="homeLogoutBtn">Deconnexion</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-copy">
+        <p class="eyebrow">Modélisation Merise, enfin visuelle</p>
+        <h1>
+          <span class="static-word">Merisia</span>
+          <span class="type-line" aria-label="Concevoir Planifier Connecter Exporter">
+            <span id="typewriter">Concevoir</span><span class="cursor">|</span>
+          </span>
+        </h1>
+        <p class="hero-text">
+          Crée ton MCD, passe naturellement vers le modèle logique, puis exporte une structure propre prête pour la base de données — sans te battre avec des diagrammes brouillons.
+        </p>
+        <div class="hero-actions">
+          <a class="primary-btn" id="heroStartLink" href="/auth">Commencer</a>
+          <a class="secondary-btn" href="#features">Voir le fonctionnement</a>
+        </div>
+      </div>
+
+      <div class="canvas-card" aria-label="Merisia diagram preview">
+        <div class="canvas-toolbar">
+          <span></span><span></span><span></span>
+          <strong>Espace MCD</strong>
+        </div>
+        <div class="diagram">
+          <article class="entity entity-a">
+            <h3>Étudiant</h3>
+            <p># id_student</p>
+            <p>name</p>
+            <p>email</p>
+          </article>
+          <article class="entity entity-b">
+            <h3>Cours</h3>
+            <p># id_course</p>
+            <p>title</p>
+            <p>credits</p>
+          </article>
+          <article class="relation">
+            <h3>Inscription</h3>
+          </article>
+          <article class="donnee-assoc">
+            <p>date</p>
+          </article>
+          <svg class="diagram-lines" viewBox="0 0 540 350" aria-hidden="true">
+            <path d="M145 116 C220 100, 254 156, 274 181" />
+            <path d="M395 116 C346 110, 310 152, 274 181" />
+            <path d="M274 221 C274 254, 315 272, 350 275" />
+          </svg>
+          <div class="hint-pill">Cardinalités : 0,N · 1,N</div>
+        </div>
+      </div>
+    </section>
+      <break>
+    <section class="description" id="features">
+
+      <div class="section-kicker">Ce que Merisia vous propose</div>
+      <h2>Un espace clair pour transformer les idées en modèles de données structurés.</h2>
+      <p>
+        Merisia aide les étudiants et les équipes à concevoir des MCD Merise propres, avec entités, associations, cardinalités, contraintes, et une transition lisible vers le modèle logique.
+      </p>
+      <div class="feature-grid">
+        <article>
+          <span>01</span>
+          <h3>Créateur visuel de MCD</h3>
+          <p>Ajoute entités, attributs, identifiants, associations et cardinalités sur un canvas précis.</p>
+        </article>
+        <article>
+          <span>02</span>
+          <h3>Conversion vers le modèle logique</h3>
+          <p>Transforme le MCD en tables relationnelles avec clés primaires, clés étrangères et relations propres.</p>
+        </article>
+        <article>
+          <span>03</span>
+          <h3>Prêt à exporter</h3>
+          <p>Exporte en PNG clair pour rapports, enseignants ou équipes de développement.</p>
+        </article>
+        <article>
+          <span>04</span>
+          <h3>Organisation des projets</h3>
+          <p>Sauvegarde les diagrammes, versionne ton travail, renomme les modèles et sépare les projets scolaires ou clients.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="workflow" id="workflow">
+      <div>
+        <p class="section-kicker">Workflow</p>
+        <h2>Concevoir → Planifier → Connecter → Exporter.</h2>
+      </div>
+      <ol class="steps">
+        <li><strong>Concevoir</strong><span>Crée des entités et attributs avec un éditeur visuel clair.</span></li>
+        <li><strong>Planifier</strong><span>Définis les identifiants, règles et contraintes avant l’implémentation.</span></li>
+        <li><strong>Connecter</strong><span>Ajoute associations et cardinalités sans lignes confuses.</span></li>
+        <li><strong>Exporter</strong><span>Génère le schéma logique, SQL, PDF ou image.</span></li>
+      </ol>
+    </section>
+
+    <section class="final-cta" id="get-started">
+      <h2>Commence ton prochain modèle de base de données avec Merisia.</h2>
+      <p>Parfait pour les projets Merise, la planification logicielle, et la transformation des besoins en vrai modèle logique.</p>
+      <a class="primary-btn" id="finalStartLink" href="/auth">Créer mon premier modèle</a>
+    </section>
+  </main>
+
+  <footer>
+    <span>© 2026 Merisia</span>
+    <span>Concevoir mieux. Modéliser plus proprement.</span>
+  </footer>
+
+  <script>
+    const loginLink = document.getElementById('loginLink');
+    const accountButton = document.getElementById('accountButton');
+    const accountDropdown = document.getElementById('accountDropdown');
+    const homeLogoutBtn = document.getElementById('homeLogoutBtn');
+    const heroStartLink = document.getElementById('heroStartLink');
+    const finalStartLink = document.getElementById('finalStartLink');
+
+    function setLoggedInState(isLoggedIn) {
+      loginLink.hidden = isLoggedIn;
+      accountButton.hidden = !isLoggedIn;
+      heroStartLink.href = isLoggedIn ? '/dashboard' : '/auth';
+      finalStartLink.href = isLoggedIn ? '/dashboard' : '/auth';
+      if (isLoggedIn) {
+        heroStartLink.textContent = 'Ouvrir mes designs';
+        finalStartLink.textContent = 'Ouvrir mes designs';
+      } else {
+        heroStartLink.textContent = 'Commencer';
+        finalStartLink.textContent = 'Creer mon premier modele';
+      }
+    }
+
+    accountButton?.addEventListener('click', () => {
+      const open = accountDropdown.hidden;
+      accountDropdown.hidden = !open;
+      accountButton.setAttribute('aria-expanded', String(open));
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!event.target.closest('#accountMenu')) {
+        accountDropdown.hidden = true;
+        accountButton?.setAttribute('aria-expanded', 'false');
+      }
+    });
+
+    homeLogoutBtn?.addEventListener('click', async () => {
+      await fetch('/api/auth/logout', { method: 'POST' });
+      accountDropdown.hidden = true;
+      setLoggedInState(false);
+    });
+
+    fetch('/api/me')
+      .then((res) => setLoggedInState(res.ok))
+      .catch(() => setLoggedInState(false));
+  </script>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Creer un compte - Merisia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..900,50..100,0..1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="/csrf.js"></script>
+</head>
+<body class="app-page auth-page">
+  <div class="grain" aria-hidden="true"></div>
+  <div class="network-bg" aria-hidden="true">
+    <svg viewBox="0 0 1440 900" preserveAspectRatio="none">
+      <g class="lines"><path d="M84 158 L304 94 L554 218 L820 122 L1160 252 L1360 170"/><path d="M120 620 L350 478 L610 552 L868 414 L1120 520 L1340 430"/><path d="M240 318 L430 430 L650 340 L884 486 L1080 314 L1300 360"/></g>
+      <g class="points"><circle cx="84" cy="158" r="5"/><circle cx="304" cy="94" r="6"/><circle cx="554" cy="218" r="5"/><circle cx="820" cy="122" r="6"/><circle cx="1160" cy="252" r="5"/><circle cx="1360" cy="170" r="5"/></g>
+    </svg>
+  </div>
+
+  <header class="topbar">
+    <a href="/" class="brand" aria-label="Merisia home"><span class="brand-name">Merisia</span></a>
+    <nav class="nav-links" aria-label="Navigation auth">
+      <a href="/">Accueil</a>
+      <a href="/auth">Connexion</a>
+    </nav>
+  </header>
+
+  <main class="auth-shell">
+    <section class="auth-copy">
+      <p class="eyebrow">Nouveau workspace</p>
+      <h1><span class="static-word">Compte</span></h1>
+      <p class="hero-text">Cree ton espace prive pour sauvegarder tes modeles Merise cote serveur.</p>
+      <div class="auth-proof">
+        <span>Prive</span><span>Persiste</span><span>Isole</span>
+      </div>
+    </section>
+
+    <section class="auth-card" aria-label="Formulaire de creation de compte">
+      <p class="section-kicker">Inscription</p>
+      <h2>Creer un compte</h2>
+      <form id="registerForm">
+        <label>Email
+          <input name="email" type="email" placeholder="exemple@ecole.edu" required />
+        </label>
+        <label>Mot de passe
+          <input name="password" type="password" placeholder="10 caracteres minimum" minlength="10" required />
+        </label>
+        <p id="authError" class="section-kicker" aria-live="polite"></p>
+        <button class="primary-btn auth-submit" type="submit">Creer le compte</button>
+      </form>
+      <br>
+      <a href="/auth">J'ai deja un compte.</a>
+    </section>
+  </main>
+
+  <script>
+    const form = document.getElementById('registerForm');
+    const errorBox = document.getElementById('authError');
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      errorBox.textContent = '';
+      const body = Object.fromEntries(new FormData(form));
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+      if (response.ok) {
+        const next = new URLSearchParams(location.search).get('next');
+        location.href = next && next.startsWith('/') ? next : '/dashboard';
+        return;
+      }
+      const payload = await response.json().catch(() => ({ error: 'Inscription impossible' }));
+      errorBox.textContent = payload.error || 'Inscription impossible';
+    });
+  </script>
+</body>
+</html>

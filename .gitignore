@@ -1,0 +1,8 @@
+# Local secrets and personal tooling
+.env
+.env.*
+!.env.example
+.dev.vars
+.dev.vars.*
+.claude/
+wrangler.local.jsonc

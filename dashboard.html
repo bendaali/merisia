@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard — Merisia</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght,SOFT,WONK@9..144,500..900,50..100,0..1&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+  <script src="/csrf.js"></script>
+</head>
+<body class="app-page dashboard-page">
+  <div class="grain" aria-hidden="true"></div>
+  <header class="topbar dashboard-topbar">
+    <a href="/" class="brand" aria-label="Merisia home"><span class="brand-name">Merisia</span></a>
+    <nav class="nav-links" aria-label="Navigation dashboard">
+      <a href="/dashboard" class="active" id="designsNav">Designs</a>
+      <a href="#archive" id="archiveNav">Archive</a>
+    </nav>
+    <button class="login" id="logoutBtn" type="button">Deconnexion</button>
+  </header>
+
+  <main class="dashboard-shell">
+    <aside class="sidebar" id="folders">
+      <div class="sidebar-head">
+        <div>
+          <p class="section-kicker">Workspace</p>
+          <h2>Mes dossiers</h2>
+        </div>
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Reduire les dossiers">&lt;</button>
+      </div>
+      <button class="folder-item active" data-folder=""><span class="folder-dot" style="--dot:#2f6fbd"></span><span class="folder-name">Tous les designs</span><span id="allCount">0</span></button>
+      <div id="folderList" class="folder-list"></div>
+      <button class="new-folder" id="newFolderBtn" type="button">+ Nouveau groupe</button>
+    </aside>
+
+    <section class="workspace-panel">
+      <div class="workspace-hero">
+        <div>
+          <p class="eyebrow">Dashboard</p>
+          <h1>Designs</h1>
+        </div>
+        <button class="new-design" id="newDesignBtn" type="button"><span>+</span> Nouveau design</button>
+      </div>
+
+      <div class="toolbar-row">
+        <label class="search-box">
+          <span>⌕</span>
+          <input id="searchInput" placeholder="Rechercher un design, statut ou dossier…" autocomplete="off" />
+        </label>
+        <div class="view-chip">PostgreSQL connecté</div>
+      </div>
+
+      <div class="design-grid" id="designGrid" aria-live="polite"></div>
+    </section>
+  </main>
+
+
+  <div class="design-modal" id="newDesignModal" aria-hidden="true">
+    <form class="design-modal-card" id="newDesignForm">
+      <button class="modal-close" type="button" id="closeDesignModal" aria-label="Fermer">×</button>
+      <p class="section-kicker">Nouveau design</p>
+      <h2>Nommer le MCD</h2>
+      <label>Nom du design
+        <input id="newDesignName" name="title" placeholder="Ex: Gestion bibliothèque" autocomplete="off" required />
+      </label>
+      <label>Dossier
+        <select id="newDesignFolder" name="folder_id"></select>
+      </label>
+      <button class="primary-btn auth-submit" type="submit">Créer et ouvrir</button>
+    </form>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>
