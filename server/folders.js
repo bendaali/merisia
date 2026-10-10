@@ -7,7 +7,7 @@ function parseId(value) {
 
 async function uniqueFolderName(pool, userId, baseName, excludeId = null) {
   const { rows } = await pool.query(
-    'SELECT name FROM folders WHERE owner_user_id = $1 AND ($2::int IS NULL OR id <> $2)',
+    'SELECT name FROM folders WHERE owner_user_id = $1 AND (CAST($2 AS INTEGER) IS NULL OR id <> $2)',
     [userId, excludeId]
   );
   const existing = new Set(rows.map((row) => String(row.name).trim().toLowerCase()));
@@ -23,8 +23,8 @@ export function registerFolderRoutes(app, pool) {
   app.get('/api/folders', requireAuth, async (req, res, next) => {
     try {
       const { rows } = await pool.query(`
-        SELECT f.id, f.name, f.color, COUNT(d.id)::int AS count,
-               (SELECT COUNT(*)::int FROM designs WHERE owner_user_id = $1 AND status <> 'Archive') AS all_count
+        SELECT f.id, f.name, f.color, CAST(COUNT(d.id) AS INTEGER) AS count,
+               (SELECT CAST(COUNT(*) AS INTEGER) FROM designs WHERE owner_user_id = $1 AND status <> 'Archive') AS all_count
         FROM folders f
         LEFT JOIN designs d ON d.folder_id = f.id AND d.owner_user_id = $1 AND d.status <> 'Archive'
         WHERE f.owner_user_id = $1
@@ -44,7 +44,7 @@ export function registerFolderRoutes(app, pool) {
       if (!name) return res.status(400).json({ ok: false, error: 'Nom de dossier requis' });
       const finalName = await uniqueFolderName(pool, req.user.id, name);
       const { rows } = await pool.query(
-        'INSERT INTO folders (owner_user_id, name, color) VALUES ($1, $2, $3) RETURNING id, name, color, 0::int AS count',
+        'INSERT INTO folders (owner_user_id, name, color) VALUES ($1, $2, $3) RETURNING id, name, color, CAST(0 AS INTEGER) AS count',
         [req.user.id, finalName, color]
       );
       res.status(201).json(rows[0]);
