@@ -1,3 +1,7 @@
+node_modules/
+.wrangler/
+.wrangler-output/
+
 # Local secrets and personal tooling
 .env
 .env.*

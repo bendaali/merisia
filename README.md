@@ -22,16 +22,46 @@ also be passed to the factory; it cannot be reconstructed from a command-line
 string. Consequently, `node server.js --database d1` by itself reports the
 missing binding; select D1 inside the Worker's `fetch(request, env)` handler.
 
-## Cloudflare D1 binding
+## Deploy to Cloudflare Workers with D1
 
-Bind the database in `wrangler.toml`:
+The Worker entry point runs the Express API through Cloudflare's Node HTTP
+compatibility layer and serves the Vite build through the `ASSETS` binding.
 
-```toml
-[[d1_databases]]
-binding = "DB"
-database_name = "merisia"
-database_id = "<your-database-id>"
+In the Cloudflare build settings use:
+
+```text
+Build command:  npm run build
+Deploy command: npm run deploy
 ```
+
+Do not use `npm start` as the Cloudflare deploy command. That command starts
+the traditional Node server and therefore expects PostgreSQL.
+
+Add a D1 binding to the Worker in **Settings > Bindings**:
+
+```text
+Variable name: DB
+Resource:      your Merisia D1 database
+```
+
+Alternatively, declare the binding in `wrangler.jsonc` after creating the
+database:
+
+```jsonc
+{
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "merisia",
+      "database_id": "<your-database-id>"
+    }
+  ]
+}
+```
+
+The Worker initializes an empty D1 database on its first database-backed
+request. Static pages remain available if the binding is missing, while API
+requests return `503 database_unavailable`.
 
 Use the Worker-provided `env.DB` binding directly:
 
@@ -64,13 +94,10 @@ const postgres = createDatabase('postgres');
 the Node PostgreSQL driver. It translates `$1` placeholders, serializes JSON
 and date parameters, and returns `{ rows, rowCount }` like `pg`.
 
-Run `await migrate(database)` once from a controlled migration Worker or
-deployment task before serving application traffic. Do not run migrations on
-every request.
-
-The current HTTP application uses Express and Node WebSockets. The D1 adapter
-is Worker-safe, but deploying the entire HTTP server to Workers would also
-require a Worker-native request/WebSocket entry point.
+The Worker deployment supports the HTTP application and D1-backed API.
+Realtime collaboration is not enabled on Workers yet because the existing
+implementation uses the Node `ws` upgrade API. The PostgreSQL Node deployment
+continues to support it.
 
 ## Local configuration
 

@@ -3,7 +3,11 @@ import express from 'express';
 import { requireAuth, requirePageAuth } from './auth.js';
 import { createEmptyDiagram } from './schema.js';
 import { validateDiagram } from './diagram.js';
-import { notifyCollaboratorAccessRevoked, notifyCollaboratorRoleUpdated, notifyDesignDeleted } from './realtime.js';
+import {
+  notifyCollaboratorAccessRevoked,
+  notifyCollaboratorRoleUpdated,
+  notifyDesignDeleted
+} from './realtime-notifier.js';
 
 const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

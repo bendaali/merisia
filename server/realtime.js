@@ -3,6 +3,7 @@ import { resolveUserFromCookies } from './auth.js';
 import { getDesignAccessByUuid } from './designs.js';
 import { DIAGRAM_MAX_BYTES, validateDiagram } from './diagram.js';
 import { parseAllowedOrigins } from './security.js';
+import { setRealtimeNotifier } from './realtime-notifier.js';
 
 const PALETTE = ['#2f6fbd', '#2d8f74', '#b8762b', '#8b5cf6', '#db2777', '#0d9488', '#dc2626', '#1d4ed8'];
 const PRESENCE_TTL_MS = 60_000;
@@ -97,20 +98,6 @@ function incrementWindowCounter(store, key, windowMs) {
   return current.count;
 }
 
-let sharedNotifier = null;
-
-export function notifyDesignDeleted(designUuid) {
-  sharedNotifier?.deleted(designUuid);
-}
-
-export function notifyCollaboratorRoleUpdated(designUuid, userEmail, role) {
-  sharedNotifier?.roleUpdated(designUuid, userEmail, role);
-}
-
-export function notifyCollaboratorAccessRevoked(designUuid, userEmail) {
-  sharedNotifier?.accessRevoked(designUuid, userEmail);
-}
-
 export function attachRealtime(httpServer, pool) {
   const wss = new WebSocketServer({ noServer: true });
   /** rooms: designUuid -> Map<connectionId, { ws, userId, email, name, color, presence, role }> */
@@ -118,7 +105,7 @@ export function attachRealtime(httpServer, pool) {
   const connectionAttempts = new Map();
   let nextConnectionId = 1;
 
-  sharedNotifier = {
+  setRealtimeNotifier({
     deleted(designUuid) {
       const room = rooms.get(designUuid);
       if (!room) return;
@@ -158,7 +145,7 @@ export function attachRealtime(httpServer, pool) {
         room.delete(connectionId);
       }
     }
-  };
+  });
 
   httpServer.on('upgrade', async (req, socket, head) => {
     try {
