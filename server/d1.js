@@ -43,8 +43,59 @@ function normalizeD1Error(cause) {
   return error;
 }
 
-function containsMultipleStatements(sql) {
-  return String(sql).trim().replace(/;$/, '').includes(';');
+function splitStatements(sql) {
+  const statements = [];
+  let start = 0;
+  let quote = null;
+  let lineComment = false;
+  let blockComment = false;
+
+  for (let index = 0; index < sql.length; index += 1) {
+    const character = sql[index];
+    const next = sql[index + 1];
+
+    if (lineComment) {
+      if (character === '\n') lineComment = false;
+      continue;
+    }
+    if (blockComment) {
+      if (character === '*' && next === '/') {
+        blockComment = false;
+        index += 1;
+      }
+      continue;
+    }
+    if (quote) {
+      if (character === quote) {
+        if (quote === "'" && next === "'") index += 1;
+        else quote = null;
+      }
+      continue;
+    }
+    if (character === '-' && next === '-') {
+      lineComment = true;
+      index += 1;
+      continue;
+    }
+    if (character === '/' && next === '*') {
+      blockComment = true;
+      index += 1;
+      continue;
+    }
+    if (character === "'" || character === '"') {
+      quote = character;
+      continue;
+    }
+    if (character === ';') {
+      const statement = sql.slice(start, index).trim();
+      if (statement) statements.push(statement);
+      start = index + 1;
+    }
+  }
+
+  const finalStatement = sql.slice(start).trim();
+  if (finalStatement) statements.push(finalStatement);
+  return statements;
 }
 
 /**
@@ -62,16 +113,22 @@ export class D1Database {
   async query(sql, params = []) {
     const translatedSql = postgresToD1Sql(sql);
     try {
-      if (!params.length && containsMultipleStatements(translatedSql) && typeof this.binding.exec === 'function') {
-        const result = await this.binding.exec(translatedSql);
+      const statements = !params.length ? splitStatements(translatedSql) : [translatedSql];
+      if (statements.length > 1) {
+        let rowCount = 0;
+        for (const sqlStatement of statements) {
+          const result = await this.binding.prepare(sqlStatement).run();
+          if (result?.success === false) throw new Error(result.error || 'D1 query failed.');
+          rowCount += Number(result?.meta?.changes || 0);
+        }
         return {
           rows: [],
-          rowCount: Number(result?.count || 0),
+          rowCount,
           command: null
         };
       }
 
-      let statement = this.binding.prepare(translatedSql);
+      let statement = this.binding.prepare(statements[0]);
       if (params.length) statement = statement.bind(...params.map(d1Parameter));
       const result = await statement.run();
       if (result?.success === false) throw new Error(result.error || 'D1 query failed.');

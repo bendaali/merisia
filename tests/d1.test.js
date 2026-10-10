@@ -72,15 +72,16 @@ test('D1 adapter binds Worker statements and preserves the pg-shaped result', as
   });
 });
 
-test('D1 adapter uses binding.exec for a parameterless statement batch', async () => {
+test('D1 adapter prepares every statement in a parameterless batch', async () => {
   const binding = bindingReturning({ success: true, results: [], meta: {} });
   const database = createD1Database(binding);
 
   const result = await database.query('CREATE TABLE one (id INTEGER); CREATE TABLE two (id INTEGER);');
 
-  assert.equal(binding.calls.length, 1);
-  assert.match(binding.calls[0].exec, /CREATE TABLE two/);
-  assert.equal(result.rowCount, 3);
+  assert.equal(binding.calls.length, 2);
+  assert.match(binding.calls[0].sql, /CREATE TABLE one/);
+  assert.match(binding.calls[1].sql, /CREATE TABLE two/);
+  assert.equal(result.rowCount, 0);
 });
 
 test('D1 unique constraint errors retain the existing route error code', async () => {
