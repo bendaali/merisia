@@ -221,7 +221,10 @@ async function loadDesigns() {
     <article class="design-row" data-open="/editor/${escapeHtml(design.id)}" data-id="${escapeHtml(design.id)}" data-title="${escapeHtml(design.title)}">
       <div class="row-preview">
         <span class="mini-node a"></span><span class="mini-node b"></span><span class="mini-node c"></span>
-        <svg viewBox="0 0 180 90"><path d="M24 54 C62 14, 88 86, 122 42 S158 28, 168 56" /></svg>
+        <svg viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M24 55 C38 45, 48 34, 59 29" />
+          <path d="M82 67 C75 52, 68 37, 59 29" />
+        </svg>
       </div>
       <div class="row-main">
         <div class="row-titleline">

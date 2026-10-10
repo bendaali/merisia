@@ -2941,9 +2941,9 @@ export default function ERDiagram() {
         }}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, gap: 10, flexWrap: "wrap" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0, flex: "1 1 auto" }}>
-            <div style={{ minWidth: 0, flex: "1 1 220px", padding: "2px 0" }}>
+        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: 10, gap: 10 }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 9, minWidth: 0, flex: "1 1 0" }}>
+            <div style={{ minWidth: 0, flex: "1 1 0", padding: "2px 0" }}>
               {titleEditing ? (
                 <input
                   value={titleDraft}
@@ -2957,7 +2957,7 @@ export default function ERDiagram() {
                   onMouseDown={(e) => e.stopPropagation()}
                   style={{
                     width: "100%",
-                    minWidth: 260,
+                    minWidth: 0,
                     fontFamily: FONT_STACK,
                     fontWeight: 700,
                     fontSize: 18,
@@ -3022,7 +3022,7 @@ export default function ERDiagram() {
               </div>
             )}
           </div>
-          <div style={{ display: "flex", gap: 6, flex: "1 1 260px", justifyContent: "flex-end", flexWrap: "wrap" }}>
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 6, flex: "0 0 auto", justifyContent: "flex-end", paddingTop: 2 }}>
             {isGuest ? (
               <a
                 href={`/auth?next=${encodeURIComponent(window.location.pathname)}`}

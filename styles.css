@@ -697,7 +697,7 @@ footer { padding: 36px clamp(20px, 5vw, 70px); display: flex; justify-content: s
   overflow: hidden;
 }
 .row-preview svg { position: absolute; inset: 0; width: 100%; height: 100%; }
-.row-preview path { fill: none; stroke: rgba(47,111,189,.45); stroke-width: 3; stroke-dasharray: 7 10; }
+.row-preview path { fill: none; stroke: rgba(47,111,189,.45); stroke-width: 2.2; stroke-dasharray: 6 8; stroke-linecap: round; vector-effect: non-scaling-stroke; }
 .row-preview .mini-node { width: 10px; height: 10px; }
 .row-titleline { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
 .row-titleline h3 {
