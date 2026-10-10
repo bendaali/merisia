@@ -423,9 +423,17 @@ archiveNav?.addEventListener('click', (event) => {
   setArchiveMode(true);
 });
 
+function syncSidebarToggle() {
+  if (!sidebar || !sidebarToggle) return;
+  const collapsed = sidebar.classList.contains('collapsed');
+  sidebarToggle.textContent = collapsed ? '>' : '<';
+  sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+  sidebarToggle.setAttribute('aria-label', collapsed ? 'Afficher les dossiers' : 'Reduire les dossiers');
+}
+
 sidebarToggle?.addEventListener('click', () => {
   sidebar.classList.toggle('collapsed');
-  sidebarToggle.textContent = sidebar.classList.contains('collapsed') ? '>' : '<';
+  syncSidebarToggle();
 });
 
 newFolderBtn?.addEventListener('click', async () => {

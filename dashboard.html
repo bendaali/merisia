@@ -14,11 +14,16 @@
   <div class="grain" aria-hidden="true"></div>
   <header class="topbar dashboard-topbar">
     <a href="/" class="brand" aria-label="Merisia home"><span class="brand-name">Merisia</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="dashboardMenu" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-menu" id="dashboardMenu">
     <nav class="nav-links" aria-label="Navigation dashboard">
       <a href="/dashboard" class="active" id="designsNav">Designs</a>
       <a href="#archive" id="archiveNav">Archive</a>
     </nav>
     <button class="login" id="logoutBtn" type="button">Deconnexion</button>
+    </div>
   </header>
 
   <main class="dashboard-shell">
@@ -28,7 +33,7 @@
           <p class="section-kicker">Workspace</p>
           <h2>Mes dossiers</h2>
         </div>
-        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-label="Reduire les dossiers">&lt;</button>
+        <button class="sidebar-toggle" id="sidebarToggle" type="button" aria-expanded="true" aria-label="Reduire les dossiers">&lt;</button>
       </div>
       <button class="folder-item active" data-folder=""><span class="folder-dot" style="--dot:#2f6fbd"></span><span class="folder-name">Tous les designs</span><span id="allCount">0</span></button>
       <div id="folderList" class="folder-list"></div>
@@ -72,6 +77,7 @@
     </form>
   </div>
 
+  <script src="navigation.js"></script>
   <script src="dashboard.js"></script>
 </body>
 </html>

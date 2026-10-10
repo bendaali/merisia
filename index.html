@@ -33,6 +33,10 @@
     <a href="#" class="brand" aria-label="Merisia home">
       <span class="brand-name">Merisia</span>
     </a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="homeMenu" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-menu" id="homeMenu">
     <nav class="nav-links" aria-label="Main navigation">
       <a href="#features">Fonctionnalités</a>
       <a href="#workflow">Workflow</a>
@@ -44,6 +48,7 @@
         <a href="/dashboard">Designs</a>
         <button type="button" id="homeLogoutBtn">Deconnexion</button>
       </div>
+    </div>
     </div>
   </header>
 
@@ -157,6 +162,7 @@
   </footer>
 
   <script type="module" src="/script.js"></script>
+  <script src="/navigation.js"></script>
   <script>
     const loginLink = document.getElementById('loginLink');
     const accountButton = document.getElementById('accountButton');

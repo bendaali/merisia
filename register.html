@@ -21,10 +21,15 @@
 
   <header class="topbar">
     <a href="/" class="brand" aria-label="Merisia home"><span class="brand-name">Merisia</span></a>
+    <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="registerMenu" aria-label="Ouvrir le menu">
+      <span></span><span></span><span></span>
+    </button>
+    <div class="topbar-menu" id="registerMenu">
     <nav class="nav-links" aria-label="Navigation auth">
       <a href="/">Accueil</a>
       <a href="/auth">Connexion</a>
     </nav>
+    </div>
   </header>
 
   <main class="auth-shell">
@@ -55,6 +60,7 @@
     </section>
   </main>
 
+  <script src="navigation.js"></script>
   <script>
     const form = document.getElementById('registerForm');
     const errorBox = document.getElementById('authError');

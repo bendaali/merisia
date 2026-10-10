@@ -1,18 +1,19 @@
 import { useState, useRef, useEffect } from "react";
 import {
   Camera,
-  DoorOpen,
   Download,
   FileText,
   Hand,
   Link as LinkIcon,
   Lock,
+  LogOut,
   Palette,
   Plus,
   Redo2,
   RotateCcw,
   Save,
   Settings,
+  Share2,
   Trash2,
   Undo2,
   Upload
@@ -40,7 +41,7 @@ const THEME = {
   shadowSoft:"0 1px 4px rgba(74, 60, 32, 0.08)",
 };
 
-const FONT_STACK   = '"Fraunces", "Manrope", Georgia, serif';
+const FONT_STACK   = '"Manrope", "Avenir Next", "Segoe UI", sans-serif';
 const FONT_MONO    = '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
 
 // ============================================================
@@ -150,6 +151,17 @@ const btnBase = {
   display: "inline-flex",
   alignItems: "center",
   gap: 6,
+};
+
+const editorActionButton = {
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: 6,
+  lineHeight: 1,
+  fontFamily: FONT_STACK,
+  fontWeight: 800,
+  letterSpacing: 0.15,
 };
 
 const btnPrimary = {
@@ -3031,12 +3043,11 @@ export default function ERDiagram() {
                   style={{
                     padding: "4px 10px", border: `1px solid ${THEME.line}`,
                     background: "#2d8f74", borderRadius: 6,
-                    fontSize: 10.5, fontFamily: FONT_STACK,
-                    cursor: saveStatus === "saving" ? "wait" : "pointer", color: THEME.cream, fontWeight: 700,
-                    letterSpacing: 0.1,
+                    fontSize: 11, cursor: saveStatus === "saving" ? "wait" : "pointer", color: THEME.cream,
+                    ...editorActionButton,
                     opacity: saveStatus === "saving" ? 0.65 : 1,
                   }}
-                ><Save size={14} strokeWidth={2.2} /> Sauver</button>
+                ><Save size={15} strokeWidth={2.4} aria-hidden="true" /> Sauver</button>
                 {designId && accessRole === "owner" && (
                   <button
                     onClick={(e) => { e.stopPropagation(); openShareModal(); }}
@@ -3045,11 +3056,10 @@ export default function ERDiagram() {
                     style={{
                       padding: "4px 10px", border: `1px solid ${THEME.line}`,
                       background: "#2f6fbd", borderRadius: 6,
-                      fontSize: 10.5, fontFamily: FONT_STACK,
-                      cursor: "pointer", color: THEME.cream, fontWeight: 700,
-                      letterSpacing: 0.1,
+                      fontSize: 11, cursor: "pointer", color: THEME.cream,
+                      ...editorActionButton,
                     }}
-                  ><LinkIcon size={14} strokeWidth={2.2} /> Partager</button>
+                  ><Share2 size={15} strokeWidth={2.4} aria-hidden="true" /> Partager</button>
                 )}
                 <button
                   onClick={(e) => { e.stopPropagation(); exitEditor(); }}
@@ -3058,11 +3068,10 @@ export default function ERDiagram() {
                   style={{
                     padding: "4px 10px", border: `1px solid ${THEME.danger}`,
                     background: THEME.danger, borderRadius: 6,
-                    fontSize: 10.5, fontFamily: FONT_STACK,
-                    cursor: "pointer", color: THEME.cream, fontWeight: 700,
-                    letterSpacing: 0.1,
+                    fontSize: 11, cursor: "pointer", color: THEME.cream,
+                    ...editorActionButton,
                   }}
-                ><DoorOpen size={14} strokeWidth={2.2} /> Sortir</button>
+                ><LogOut size={15} strokeWidth={2.4} aria-hidden="true" /> Sortir</button>
               </>
             )}
           </div>

@@ -8,6 +8,7 @@ const staticFiles = [
   'register.html',
   'dashboard.html',
   'styles.css',
+  'navigation.js',
   'script.js',
   'csrf.js',
   'dashboard.js'
