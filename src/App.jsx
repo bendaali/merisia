@@ -41,7 +41,8 @@ const THEME = {
   shadowSoft:"0 1px 4px rgba(74, 60, 32, 0.08)",
 };
 
-const FONT_STACK   = '"Manrope", "Avenir Next", "Segoe UI", sans-serif';
+const FONT_STACK   = '"Fraunces", "Manrope", Georgia, serif';
+const ACTION_FONT_STACK = '"Manrope", "Avenir Next", "Segoe UI", sans-serif';
 const FONT_MONO    = '"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace';
 
 // ============================================================
@@ -159,7 +160,7 @@ const editorActionButton = {
   justifyContent: "center",
   gap: 6,
   lineHeight: 1,
-  fontFamily: FONT_STACK,
+  fontFamily: ACTION_FONT_STACK,
   fontWeight: 800,
   letterSpacing: 0.15,
 };
@@ -2931,8 +2932,7 @@ export default function ERDiagram() {
         style={{
           position: "absolute", top: 14, left: 14,
           ...panelStyle,
-          padding: "12px 16px",
-          paddingRight: 24,
+          padding: "14px 18px",
           fontSize: 12,
           zIndex: 10,
           width: "min(720px, calc(100vw - 520px))",
@@ -2943,7 +2943,7 @@ export default function ERDiagram() {
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10, gap: 10, flexWrap: "wrap" }}>
           <div style={{ display: "flex", alignItems: "center", gap: 9, minWidth: 0, flex: "1 1 auto" }}>
-            <div style={{ minWidth: 0, flex: "1 1 320px" }}>
+            <div style={{ minWidth: 0, flex: "1 1 220px", padding: "2px 0" }}>
               {titleEditing ? (
                 <input
                   value={titleDraft}
@@ -2962,11 +2962,11 @@ export default function ERDiagram() {
                     fontWeight: 700,
                     fontSize: 18,
                     color: THEME.ink,
-                    lineHeight: 1,
+                    lineHeight: 1.25,
                     border: `1px solid ${THEME.line}`,
                     borderRadius: 6,
                     background: THEME.cream,
-                    padding: "3px 7px",
+                    padding: "5px 8px",
                   }}
                 />
               ) : (
@@ -2975,7 +2975,7 @@ export default function ERDiagram() {
                   onDoubleClick={beginTitleRename}
                   style={{
                     fontFamily: FONT_STACK, fontWeight: 700, fontSize: 18,
-                    color: THEME.ink, lineHeight: 1,
+                    color: THEME.ink, lineHeight: 1.25, padding: "1px 0 2px",
                     whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis",
                     cursor: isReadOnly ? "default" : "text",
                   }}
