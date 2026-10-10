@@ -1,5 +1,4 @@
 import http from 'node:http';
-import { env } from 'cloudflare:workers';
 import { handleAsNodeRequest } from 'cloudflare:node';
 import { createApp } from './app.js';
 import { resolveUserFromCookies } from './auth.js';
@@ -14,14 +13,20 @@ let currentBinding;
 let currentDatabase;
 let schemaReady;
 
-function database() {
-  if (!env.DB) {
+function configureDatabase(workerEnv) {
+  if (!workerEnv.DB) {
     throw new Error('Missing D1 binding "DB". Add it in the Worker settings.');
   }
-  if (env.DB !== currentBinding) {
-    currentBinding = env.DB;
-    currentDatabase = createD1Database(env.DB);
+  if (workerEnv.DB !== currentBinding) {
+    currentBinding = workerEnv.DB;
+    currentDatabase = createD1Database(workerEnv.DB);
     schemaReady = null;
+  }
+}
+
+function database() {
+  if (!currentDatabase) {
+    throw new Error('D1 database has not been configured for this request.');
   }
   return currentDatabase;
 }
@@ -51,6 +56,11 @@ async function ensureSchema() {
     });
   }
   return schemaReady;
+}
+
+async function ensureDatabase(workerEnv) {
+  configureDatabase(workerEnv);
+  await ensureSchema();
 }
 
 function workerAuthRateLimiter(req, res, next) {
@@ -121,7 +131,7 @@ async function assetResponse(request, workerEnv, pathname, { csrf = false } = {}
 }
 
 async function databaseUnavailable(error) {
-  console.error('Worker database initialization failed:', error);
+  console.error('Worker database initialization failed:', error?.message, error?.stack);
   return Response.json(
     {
       ok: false,
@@ -131,8 +141,8 @@ async function databaseUnavailable(error) {
   );
 }
 
-async function authenticatedUser(request) {
-  await ensureSchema();
+async function authenticatedUser(request, workerEnv) {
+  await ensureDatabase(workerEnv);
   return resolveUserFromCookies(databaseProxy, request.headers.get('Cookie'));
 }
 
@@ -143,7 +153,7 @@ async function routePage(request, workerEnv, pathname) {
   if (pathname === '/auth' || pathname === '/register') {
     try {
       const hasSession = cookieValue(request.headers.get('Cookie'), 'merisia_session');
-      if (hasSession && await authenticatedUser(request)) return redirect(request, '/dashboard');
+      if (hasSession && await authenticatedUser(request, workerEnv)) return redirect(request, '/dashboard');
     } catch (error) {
       return databaseUnavailable(error);
     }
@@ -156,7 +166,7 @@ async function routePage(request, workerEnv, pathname) {
   }
   if (pathname === '/dashboard' || /^\/editor\/[0-9a-f-]{36}$/i.test(pathname)) {
     try {
-      if (!await authenticatedUser(request)) {
+      if (!await authenticatedUser(request, workerEnv)) {
         return redirect(request, `/auth?next=${encodeURIComponent(pathname)}`);
       }
     } catch (error) {
@@ -183,7 +193,7 @@ export default {
 
     if (pathname.startsWith('/api/') || pathname.startsWith('/share/')) {
       try {
-        await ensureSchema();
+        await ensureDatabase(workerEnv);
       } catch (error) {
         return databaseUnavailable(error);
       }
